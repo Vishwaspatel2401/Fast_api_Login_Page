@@ -1,3 +1,4 @@
+from typing import List
 from database.models import User
 
 class UserRepo:
@@ -16,3 +17,18 @@ class DbUserRepo(UserRepo):
 
     def create_user(self, username: str, password: str):
         return self.model.create(username=username, password=password)
+
+
+class StaticUserRepo(UserRepo):
+    def __init__(self):
+        self.users: List[User] = [
+            User(username="first", password="first"),
+            User(username="second", password="second")
+        ]
+
+    def get_user_by_username(self, username: str):
+        pass
+
+    def create_user(self, username: str, password: str):
+        pass
+

@@ -1,0 +1,5 @@
+db:
+  host: ${MYSQL_HOST:127.0.0.1}
+  port: ${MYSQL_PORT:3306}
+  username: ${MYSQL_ROOT:root}
+  password: ${MYSQL_PASSWORD}

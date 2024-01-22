@@ -1,8 +1,19 @@
 from fastapi import FastAPI
+from container import Container
 from routers import  users
-from fastapi.templating import Jinja2Templates
+from dotenv import load_dotenv
 
-app = FastAPI()
+load_dotenv('.env')
+
+def create_app():
+    container = Container()
+
+    app = FastAPI()
+    app.container = container
+    app.include_router(users.router)
+    return app
+
+app = create_app()
 
 # # Include routers
 # app.include_router(auth.router, prefix="/auth", tags=["Authentication"])

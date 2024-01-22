@@ -1,14 +1,20 @@
 from fastapi import APIRouter, HTTPException, status , Depends
+from dependency_injector.wiring import Provide, inject
+
+from container import Container
 from entities.user_entities import UserCredentials
 from repos import user_repo
 from passlib.context import CryptContext
-from pydantic import BaseModel
+
+from repos.users import UserRepo
+
 
 router = APIRouter()
-
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-def get_session_token(credentials: UserCredentials):
+
+@inject
+def get_session_token(credentials: UserCredentials, user_repo: UserRepo = Depends(Provide[Container.user_repo])):
     username = credentials.username
     password = credentials.password
 
@@ -23,7 +29,9 @@ def get_session_token(credentials: UserCredentials):
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-def get_current_user(token: str):
+
+@inject
+def get_current_user(token: str, user_repo: UserRepo = Depends(Provide[Container.user_repo])):
     username = token.split("_")[-1]
     user = user_repo.get_user_by_username(username)
 
@@ -35,8 +43,10 @@ def get_current_user(token: str):
         )
     return user
 
+
 @router.post("/register")
-async def register(user: UserCredentials):   
+@inject
+async def register(user: UserCredentials, user_repo: UserRepo = Depends(Provide[Container.user_repo])):   
     existing_user = user_repo.get_user_by_username(user.username)
 
     if existing_user:
@@ -50,12 +60,16 @@ async def register(user: UserCredentials):
     
     return {"username": created_user.username}
 
+
 @router.post("/login")
-async def login(credentials: UserCredentials):
+@inject
+async def login(credentials: UserCredentials, user_repo: UserRepo = Depends(Provide[Container.user_repo])):
     token = get_session_token(credentials, user_repo)
     return {"session_token": token}
 
+
 @router.post("/logout")
+@inject
 async def logout():
     return {"message": "Logout successful"}
 

@@ -1,13 +1,9 @@
 # database/models.py
-from peewee import Model, CharField
-from . import db  
 
+# Add models related to SQL Alchemy
 
-class User(Model):
-    username = CharField(unique=True)
-    password = CharField() 
+from pydantic import BaseModel
 
-    class Meta:
-        database = db  
-        table_name = "users" 
-        
+class User(BaseModel):
+    username: str
+    password: str

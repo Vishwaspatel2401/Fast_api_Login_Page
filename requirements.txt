@@ -1,0 +1,7 @@
+pydantic
+fastapi
+dependency-injector
+dependency-injector[yaml]
+passlib
+python-dotenv
+uvicorn
