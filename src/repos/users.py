@@ -1,12 +1,29 @@
 from typing import List
 from database.models import User
+from sqlalchemy import create_engine, Column, String, Integer
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from database.models import Base
 
 class UserRepo:
+
+    def __init__(self, db_uri: str):
+        self.engine = create_engine(db_uri)
+        Base.metadata.create_all(self.engine)
+        self.Session = sessionmaker(bind=self.engine)
+
     def get_user_by_username(self, username: str):
-        pass
+        session = self.Session()
+        user = session.query(User).filter_by(username=username).first()
+        session.close()
 
     def create_user(self, username: str, password: str):
-        pass
+        new_user = User(username=username, password=password)
+        session = self.Session()
+        session.add(new_user)
+        
+        session.commit()
+        session.close()
 
 class DbUserRepo(UserRepo):
     def __init__(self, model):
@@ -27,8 +44,13 @@ class StaticUserRepo(UserRepo):
         ]
 
     def get_user_by_username(self, username: str):
-        pass
+        for u in self.users:
+            if u.username == username:
+                return u
+        raise ValueError("User not found")
 
     def create_user(self, username: str, password: str):
-        pass
+        user = User(username=username, password=password)
+        self.users.append(user)
+        return user
 

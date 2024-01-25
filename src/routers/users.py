@@ -19,6 +19,8 @@ def get_session_token(credentials: UserCredentials, user_repo: UserRepo = Depend
     password = credentials.password
 
     user = user_repo.get_user_by_username(username)
+
+    print(user)
     
     if user and pwd_context.verify(password, user.password):
         return f"session_token_for_{username}"
@@ -47,24 +49,27 @@ def get_current_user(token: str, user_repo: UserRepo = Depends(Provide[Container
 @router.post("/register")
 @inject
 async def register(user: UserCredentials, user_repo: UserRepo = Depends(Provide[Container.user_repo])):   
-    existing_user = user_repo.get_user_by_username(user.username)
+    try:
+        existing_user = user_repo.get_user_by_username(user.username)
+    except ValueError:
+        existing_user = False
 
     if existing_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="User with this username already exists",
         )
-
+ 
     hashed_password = pwd_context.hash(user.password)
     created_user = user_repo.create_user(user.username, hashed_password)
-    
+
     return {"username": created_user.username}
 
 
 @router.post("/login")
 @inject
 async def login(credentials: UserCredentials, user_repo: UserRepo = Depends(Provide[Container.user_repo])):
-    token = get_session_token(credentials, user_repo)
+    token = get_session_token(credentials)
     return {"session_token": token}
 
 

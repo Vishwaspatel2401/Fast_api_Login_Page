@@ -6,7 +6,7 @@ from repos.users import StaticUserRepo
 
 class Container(containers.DeclarativeContainer):
 
-    wiring_config = containers.WiringConfiguration(modules=["database", "entities", "repos", "routers"])
+    wiring_config = containers.WiringConfiguration(modules=["routers.users"])
 
     config = providers.Configuration(yaml_files=["config.yml"])
 
