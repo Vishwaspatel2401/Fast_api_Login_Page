@@ -14,6 +14,8 @@ class UserDB(Base):
     username = Column(String, unique=True, index=True)
     password = Column(String)
 
+
 class User(BaseModel):
     username: str
     password: str
+    
