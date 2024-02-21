@@ -1,13 +1,20 @@
 from typing import List
-
 from database.models import User
 from sqlalchemy import create_engine, Column, String, Integer
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from database.models import Base
 
-class UserRepo:
 
+class UserRepo:
+    def get_user_by_username(self, username: str):
+        pass
+
+    def create_user(self, username: str, password: str):
+        pass
+
+
+class DbSqlUserRepo(UserRepo):
     def __init__(self, db_uri: str):
         self.engine = create_engine(db_uri)
         Base.metadata.create_all(self.engine)
@@ -25,6 +32,7 @@ class UserRepo:
         
         session.commit()
         session.close()
+
 
 class DbUserRepo(UserRepo):
     def __init__(self, model):
