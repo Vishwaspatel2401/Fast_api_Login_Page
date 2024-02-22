@@ -18,7 +18,7 @@ class User(BaseModel):
 
 
 class ShowUser(BaseModel):
-    name :str
+    names :str
     email:str 
     class Config():
         orm_mode =True
